@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BanterBox
+
+**BanterBox** is an AI-powered chat interface built with Next.js. It features multiple personalities, each providing unique responses ("bants") based on your selection. Enjoy friendly, sarcastic, formal, or random banter, with a beautiful UI, voice input/output, and conversation export capabilities.
+
+---
+
+## Features
+
+- 🧑‍🎤 **Multiple Personalities:** Choose from Friendly, Sarcastic, Formal, or Random for varied AI responses.
+- 💬 **Dynamic Bants:** The AI adapts its tone and style based on the selected personality.
+- 🎙️ **Voice Input/Output:** Speak to BanterBox and hear its replies (if enabled).
+- 📤 **Export Conversations:** Download your chat history as `.txt`, `.pdf`, or `.md`.
+- 🌗 **Theme Toggle:** Switch between light and dark modes.
+- 📱 **Responsive Design:** Optimized for mobile and desktop.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Run the development server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   # or
+   bun dev
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Open BanterBox:**
+   Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Usage
+
+- **Select Personality:** Use the dropdown in the header to choose your AI's personality.
+- **Chat:** Type or speak your message. The AI will respond in the chosen style.
+- **Export:** Click the export button to save your conversation.
+- **Theme:** Toggle between light and dark mode for your preferred look.
+
+---
+
+## Project Structure
+
+- `src/app/` — Next.js app directory
+- `src/components/` — UI components (Header, Chat, Personality Selector, etc.)
+- `src/types/` — TypeScript types for personalities, themes, etc.
+
+---
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
+- [Radix UI Select](https://www.radix-ui.com/primitives/docs/components/select)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+Deploy BanterBox easily on [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
+
+---
+
+**Enjoy the banter!**

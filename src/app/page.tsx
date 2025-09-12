@@ -1,103 +1,160 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useCallback, useEffect } from "react";
+import { Message, ChatSettings, Personality } from "@/types";
+import { generateAIResponse } from "@/utils/aiResponses";
+import { exportToTxt, exportToPdf } from "@/utils/exportUtils";
+import { useTheme } from "@/hooks/useTheme";
+import Header from "@/components/Header";
+import ChatWindow from "@/components/ChatWindow";
+import InputBar from "@/components/InputBar";
+import SettingsModal from "@/components/SettingsModal";
+import FloatingSettingsButton from "@/components/FloatingSettingsButton";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { theme, toggleTheme } = useTheme();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState<ChatSettings>({
+    animationsEnabled: true,
+    memoryEnabled: true,
+    currentPersonality: "friendly",
+    theme: theme,
+    selectedVoice: null,
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  // Load messages from localStorage if memory is enabled
+  useEffect(() => {
+    if (settings.memoryEnabled && typeof window !== "undefined") {
+      const savedMessages = localStorage.getItem("ai-chat-messages");
+      if (savedMessages) {
+        try {
+          const parsed = JSON.parse(savedMessages);
+          setMessages(
+            parsed.map((msg: Message) => ({
+              ...msg,
+              timestamp: new Date(msg.timestamp),
+            }))
+          );
+        } catch (error) {
+          console.error("Failed to load messages from localStorage:", error);
+        }
+      }
+    }
+  }, [settings.memoryEnabled]);
+
+  // Save messages to localStorage when they change
+  useEffect(() => {
+    if (
+      settings.memoryEnabled &&
+      messages.length > 0 &&
+      typeof window !== "undefined"
+    ) {
+      localStorage.setItem("ai-chat-messages", JSON.stringify(messages));
+    }
+  }, [messages, settings.memoryEnabled]);
+
+  // Clear messages when memory is disabled
+  useEffect(() => {
+    if (!settings.memoryEnabled && typeof window !== "undefined") {
+      localStorage.removeItem("ai-chat-messages");
+    }
+  }, [settings.memoryEnabled]);
+
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        text,
+        isUser: true,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+      setIsTyping(true);
+
+      // Simulate AI processing delay
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1000 + Math.random() * 2000)
+      );
+
+      const aiResponse = generateAIResponse(settings.currentPersonality, text);
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: aiResponse,
+        isUser: false,
+        timestamp: new Date(),
+        personality: settings.currentPersonality,
+      };
+
+      setIsTyping(false);
+      setMessages((prev) => [...prev, aiMessage]);
+    },
+    [settings.currentPersonality]
+  );
+
+  const handlePersonalityChange = useCallback((personality: Personality) => {
+    setSettings((prev) => ({ ...prev, currentPersonality: personality }));
+  }, []);
+
+  const handleExport = useCallback(
+    (format: "txt" | "pdf" | "md") => {
+      if (messages.length === 0) {
+        alert("No messages to export!");
+        return;
+      }
+
+      if (format === "txt") {
+        exportToTxt(messages, settings.currentPersonality);
+      } else if (format === "pdf") {
+        exportToPdf(messages, settings.currentPersonality);
+      }
+    },
+    [messages, settings.currentPersonality]
+  );
+
+  const handleSettingsChange = useCallback(
+    (newSettings: Partial<ChatSettings>) => {
+      setSettings((prev) => ({ ...prev, ...newSettings }));
+    },
+    []
+  );
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isSettingsOpen) {
+        setIsSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isSettingsOpen]);
+
+  return (
+    <div className="h-screen flex flex-col overflow-hidden">
+      <Header
+        personality={settings.currentPersonality}
+        theme={theme}
+        onPersonalityChange={handlePersonalityChange}
+        onThemeToggle={toggleTheme}
+        onExport={handleExport}
+      />
+
+      <ChatWindow messages={messages} settings={settings} isTyping={isTyping} />
+
+      <InputBar onSendMessage={handleSendMessage} disabled={isTyping} />
+
+      <FloatingSettingsButton onClick={() => setIsSettingsOpen(true)} />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        onSettingsChange={handleSettingsChange}
+      />
     </div>
   );
 }
