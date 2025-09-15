@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Send, Mic, MicOff } from "lucide-react";
-import { useSpeechRecognition } from "../hooks/useSpeech";
+import { useSpeechRecognition } from "@/hooks/useSpeech";
 
 interface InputBarProps {
   onSendMessage: (message: string) => void;

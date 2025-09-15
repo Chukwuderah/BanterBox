@@ -43,11 +43,11 @@ export default function NotFound() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="text-lg sm:text-xl text-white/90 mb-8 text-center"
+        className="text-base sm:text-xl text-white/90 mb-8 text-center"
       >
-        The page you’re looking for doesn’t exist or has been moved.
+        The page you&apos;re looking for doesn&apos;t exist or has been moved.
         <br />
-        Let’s get you back to the banter!
+        Let&apos;s get you back to the banter!
       </motion.p>
       <motion.div
         initial={{ opacity: 0, y: 10 }}

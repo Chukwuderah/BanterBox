@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, Variants } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 import { Message, ChatSettings } from "@/types";
-import { getPersonalityEmoji, getPersonalityColor } from "@/utils/aiResponses";
+import { getPersonalityEmoji, getPersonalityColor } from "@/lib/banterLibrary";
 import { useSpeechSynthesis } from "@/hooks/useSpeech";
 
 interface MessageBubbleProps {

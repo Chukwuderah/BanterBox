@@ -47,7 +47,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             <div className="text-center py-12 max-w-md">
               <DotLottieReact
                 src="https://lottie.host/65b3eddb-183b-42fa-88a4-44f008102ecf/hZCVSM1dTV.lottie"
-                loop
+                // loop
                 autoplay
               />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">

@@ -79,7 +79,7 @@ export default function Home() {
         setTimeout(resolve, 1000 + Math.random() * 2000)
       );
 
-      const aiResponse = generateAIResponse(settings.currentPersonality, text);
+      const aiResponse = await generateAIResponse(settings.currentPersonality, text);
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: aiResponse,

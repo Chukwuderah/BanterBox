@@ -212,16 +212,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                     <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      A beautiful AI chat interface built with Next.js,
-                      TypeScript, Tailwind CSS, and Framer Motion. Features
-                      multiple AI personalities, voice input/output,
-                      conversation export capabilities, and WhatsApp-inspired
-                      background animations.
+                      Banter Box is a sleek AI chat experience built with
+                      Next.js, TypeScript, Tailwind CSS, and Framer Motion.
+                      Version 2.0 introduces typed safety upgrades, Google
+                      Gemini API integration for more dynamic responses,
+                      multiple AI personalities, voice input/output, and
+                      conversation export features.
                     </p>
                     <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Built as a side project • Fully responsive • No
-                        external APIs required
+                      <p className="text-xs md:text-center text-gray-500 dark:text-gray-400">
+                        Built as a side project • Fully responsive • Powered by
+                        Gemini AI
                       </p>
                     </div>
                   </div>
