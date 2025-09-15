@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+type SpeechRecognitionConstructor =
+  | typeof window.SpeechRecognition
+  | typeof window.webkitSpeechRecognition;
+
+type SpeechRecognitionInstance =
+  InstanceType<SpeechRecognitionConstructor> | null;
 
 export const useVoices = () => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -77,6 +84,7 @@ export const useSpeechRecognition = () => {
   const [listening, setListening] = useState(false);
   const [supported, setSupported] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const recognitionRef = useRef<SpeechRecognitionInstance>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -91,9 +99,11 @@ export const useSpeechRecognition = () => {
 
     const SpeechRecognition =
       window.webkitSpeechRecognition || window.SpeechRecognition;
+    
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
 
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = "en-US";
 
@@ -110,7 +120,6 @@ export const useSpeechRecognition = () => {
 
       if (result.isFinal) {
         onResult(transcript);
-        setListening(false);
       }
     };
 
@@ -119,7 +128,8 @@ export const useSpeechRecognition = () => {
     };
 
     recognition.onend = () => {
-      setListening(false);
+      // Only reset if we didn’t manually stop
+      if (recognitionRef.current) setListening(false);
     };
 
     recognition.start();
@@ -127,5 +137,13 @@ export const useSpeechRecognition = () => {
     return recognition;
   };
 
-  return { startListening, listening, supported, transcript };
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+      setListening(false);
+    }
+  };
+
+  return { startListening, stopListening, listening, supported, transcript };
 };

@@ -30,7 +30,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <div
-      className="flex-1 overflow-y-auto pt-20 pb-24 relative"
+      className="flex-1 overflow-y-auto md:px-24 lg:px-28 pt-20 pb-24 relative"
       role="main"
       aria-label="Chat conversation"
       style={{ height: "calc(100vh - 160px)" }}

@@ -15,8 +15,13 @@ const InputBar: React.FC<InputBarProps> = ({
   disabled = false,
 }) => {
   const [message, setMessage] = useState("");
-  const { startListening, listening, supported } = useSpeechRecognition();
+  const { startListening, stopListening, listening, supported } =
+    useSpeechRecognition();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Detect if on mobile
+  const isMobile =
+    typeof window !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +35,29 @@ const InputBar: React.FC<InputBarProps> = ({
   };
 
   const handleVoiceInput = () => {
-    if (listening) return;
-
-    startListening((transcript) => {
-      setMessage(transcript);
-    });
+    if (listening) {
+      stopListening();
+    } else {
+      startListening((transcript) => {
+        setMessage(transcript);
+      });
+    }
   };
+
+  // Global Esc listener (for when textarea is disabled during voice mode)
+  useEffect(() => {
+    if (!listening) return;
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        stopListening();
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [listening, stopListening]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -43,7 +65,8 @@ const InputBar: React.FC<InputBarProps> = ({
       handleSubmit(e);
     }
     if (e.key === "Escape" && listening) {
-      // Speech recognition will automatically stop
+      e.preventDefault();
+      stopListening();
     }
   };
 
@@ -83,7 +106,11 @@ const InputBar: React.FC<InputBarProps> = ({
               } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
               aria-label={listening ? "Stop voice input" : "Start voice input"}
               title={
-                listening ? "Listening... (Press Esc to cancel)" : "Voice input"
+                listening
+                  ? isMobile
+                    ? "Tap again to stop voice input"
+                    : "Listening... (Press Esc to cancel)"
+                  : "Voice input"
               }
             >
               {listening ? (
@@ -148,7 +175,10 @@ const InputBar: React.FC<InputBarProps> = ({
             aria-live="polite"
           >
             <span className="text-red-500 text-sm font-medium">
-              🎤 Listening... Press Esc to cancel
+              🎤{" "}
+              {isMobile
+                ? "Listening... Tap the mic to stop"
+                : "Listening... Press Esc to cancel"}
             </span>
           </motion.div>
         )}
@@ -163,7 +193,7 @@ const InputBar: React.FC<InputBarProps> = ({
             Enter
           </kbd>{" "}
           to send
-          {supported && (
+          {supported && !isMobile && (
             <>
               {" "}
               •{" "}

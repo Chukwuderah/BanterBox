@@ -29,7 +29,7 @@ const BackgroundPattern: React.FC = () => {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30 dark:opacity-20">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30 dark:opacity-20">
       {shapes.map((shape) => (
         <motion.div
           key={shape.id}

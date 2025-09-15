@@ -99,7 +99,7 @@ export default function Home() {
   }, []);
 
   const handleExport = useCallback(
-    (format: "txt" | "pdf" | "md") => {
+    (format: "txt" | "pdf") => {
       if (messages.length === 0) {
         alert("No messages to export!");
         return;

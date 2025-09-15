@@ -18,7 +18,7 @@ interface HeaderProps {
   theme: Theme;
   onPersonalityChange: (personality: Personality) => void;
   onThemeToggle: () => void;
-  onExport: (format: "txt" | "pdf" | "md") => void;
+  onExport: (format: "txt" | "pdf") => void;
 }
 
 function useIsMobile() {
@@ -150,13 +150,6 @@ const Header: React.FC<HeaderProps> = ({
                 role="menuitem"
               >
                 📑 Export .pdf
-              </button>
-              <button
-                onClick={() => onExport("md")}
-                className="block w-full px-4 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg focus:bg-gray-100 dark:focus:bg-gray-700 focus:outline-none"
-                role="menuitem"
-              >
-                📝 Export .md
               </button>
             </div>
           </div>
